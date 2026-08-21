@@ -1,0 +1,15 @@
+- [x] Package the current portfolio source files into a downloadable ZIP archive.
+- [ ] Deliver the source-code ZIP to the user.
+- [x] Inspect the Technical Inventory UI in the current portfolio.
+- [x] Identify focused Technical Inventory improvements that preserve the existing design system.
+- [ ] Present the Technical Inventory analysis to the user.
+- [x] Implement core-stack hierarchy, category interactions, and credential telemetry in Technical Inventory.
+- [x] Verify the updated Technical Inventory section at desktop and mobile widths.
+- [ ] Publish the focused Technical Inventory refinement.
+- [x] Audit the portfolio’s current UI, UX, content hierarchy, and responsive behavior.
+- [x] Define a premium visual and interaction upgrade that preserves the existing identity.
+- [x] Implement the portfolio-wide frontend refinement.
+- [x] Verify the upgraded portfolio at desktop and mobile widths.
+- [ ] Publish the premium portfolio update.
+- [ ] Package the latest portfolio source folder into a downloadable ZIP archive.
+- [ ] Deliver the latest source-code ZIP to the user.
