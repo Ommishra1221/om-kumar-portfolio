@@ -11,7 +11,7 @@ import {
 
 const assets = {
   logo: "/om-monogram-favicon.ico",
-  portrait: "/om-kumar-mishra-portrait.jpeg",
+  portrait: "/om-kumar-mishra-portrait.png",
   resume: "/om-kumar-mishra-resume.pdf",
   hero: "/manus-storage/om-hero-system-map_9daeb078.jpg",
   commerce: "/manus-storage/om-project-ecommerce_dc67cd72.jpg",
