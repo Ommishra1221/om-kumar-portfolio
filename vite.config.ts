@@ -203,7 +203,55 @@ function vitePluginStorageProxy(): Plugin {
   };
 }
 
-const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector(), vitePluginStorageProxy()];
+/**
+ * Replaces the %VITE_SITE_URL% token used by the Open Graph tags and removes the
+ * analytics tag when it is not configured. Without this, an unset variable ships
+ * a literal "%VITE_ANALYTICS_ENDPOINT%/umami" request that 404s on every load.
+ */
+function vitePluginSiteMeta(): Plugin {
+  let env: Record<string, string> = {};
+
+  return {
+    name: "site-meta",
+    configResolved(config) {
+      env = config.env as Record<string, string>;
+    },
+    transformIndexHtml: {
+      order: "pre",
+      handler(html) {
+        // Vercel exposes the deployment origin at build time, so a preview or
+        // production deploy gets working OG tags without extra configuration.
+        const configured = env.VITE_SITE_URL ?? (env.VERCEL_URL ? `https://${env.VERCEL_URL}` : "");
+        const siteUrl = configured.replace(/\/+$/, "");
+        const analyticsReady = Boolean(env.VITE_ANALYTICS_ENDPOINT && env.VITE_ANALYTICS_WEBSITE_ID);
+
+        let out = analyticsReady ? html : html.replace(/\s*<script[^>]*umami[^>]*><\/script>/i, "");
+
+        if (!siteUrl) {
+          return out.replace(/\s*<!-- site-url:start -->[\s\S]*?<!-- site-url:end -->/i, "");
+        }
+
+        return out.split("%VITE_SITE_URL%").join(siteUrl);
+      },
+    },
+  };
+}
+
+/**
+ * Development-only tooling. The Manus host runtime alone inlines ~366 kB into
+ * index.html, and the JSX source-location plugin leaves data-loc attributes in
+ * the production bundle, so neither belongs in a shipped build.
+ */
+function devOnly(plugins: Plugin[]): Plugin[] {
+  return plugins.map((plugin) => ({ ...plugin, apply: "serve" as const }));
+}
+
+const plugins = [
+  react(),
+  tailwindcss(),
+  vitePluginSiteMeta(),
+  ...devOnly([jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector(), vitePluginStorageProxy()]),
+];
 
 export default defineConfig({
   plugins,
