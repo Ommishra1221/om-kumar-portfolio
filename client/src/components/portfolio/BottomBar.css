@@ -1,0 +1,65 @@
+/* =========================================================================
+   Sticky mobile action bar.
+   Reserve --bar-h so the bar never overlaps the end of the page.
+   ========================================================================= */
+@media (max-width: 780px) {
+  :root { --bar-h: 58px; }
+}
+
+.bottom-bar {
+  position: fixed;
+  z-index: 90;
+  inset: auto 0 0 0;
+  display: none;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2px;
+  padding: 0 .35rem;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  border-top: 1px solid color-mix(in srgb, var(--line) 85%, transparent);
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 -12px 30px rgba(0, 0, 0, .38);
+}
+
+.bar-action {
+  display: grid;
+  place-items: center;
+  gap: .18rem;
+  min-height: var(--bar-h);
+  padding: .34rem .2rem;
+  color: var(--muted);
+  font: 600 .52rem/1 var(--font-mono);
+  letter-spacing: .04em;
+  text-align: center;
+  transition: color var(--dur-fast) var(--ease-out), background var(--dur-fast);
+}
+.bar-action small { font: inherit; }
+.bar-action svg { position: relative; z-index: 1; color: var(--cyan); }
+.bar-action small { position: relative; z-index: 1; }
+.bar-action.is-active { color: var(--text); background: color-mix(in srgb, var(--cyan) 9%, transparent); }
+.bar-action.is-active svg { color: var(--orange); }
+/* Active marker uses transform only, so nothing reflows on tap. */
+.bar-action.is-active::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 20%;
+  width: 60%; height: 2px;
+  background: var(--orange);
+  box-shadow: 0 0 10px var(--orange);
+}
+
+@media (max-width: 780px) {
+  .bottom-bar { display: grid; }
+
+  /* Keep the back-to-top control clear of the bar. */
+  .to-top {
+    right: .85rem;
+    bottom: calc(var(--bar-h) + env(safe-area-inset-bottom, 0px) + .85rem);
+  }
+  /* The footer already ends the page; keep its last row clear of the bar. */
+  footer { padding-bottom: calc(1.25rem + var(--bar-h)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bottom-bar { backdrop-filter: none; background: var(--bg); }
+}

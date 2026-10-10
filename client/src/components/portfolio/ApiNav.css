@@ -1,0 +1,176 @@
+/* =========================================================================
+   Navigation as API endpoints.
+   ========================================================================= */
+
+.api-nav ul {
+  display: flex;
+  align-items: center;
+  gap: clamp(.35rem, 1.1vw, 1rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.api-nav a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .48rem .1rem;
+  color: var(--muted);
+  font: 500 .6rem/1 var(--font-mono);
+  letter-spacing: .02em;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+/* ::before carries the active underline so ::after stays free for the hit area. */
+.api-nav a::before {
+  content: "";
+  position: absolute;
+  bottom: -1px; left: 0;
+  width: 100%; height: 1px;
+  transform: scaleX(0);
+  transform-origin: left;
+  background: var(--orange);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.api-nav a:hover,
+.api-nav a.is-active { color: var(--text); }
+.api-nav a.is-active::before { transform: scaleX(1); }
+.api-nav a.is-active .method { border-color: var(--orange); }
+.api-nav-path { white-space: nowrap; }
+
+/* Shared compact icon button: small visually, 44x44px interactive (see .hit). */
+.head-icon {
+  display: grid;
+  place-items: center;
+  width: 34px; height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--surface) 85%, transparent);
+  color: var(--orange);
+  transition: border-color var(--dur-fast), color var(--dur-fast);
+}
+.head-icon:hover { border-color: var(--orange); color: var(--cyan); }
+.head-icon[aria-pressed="true"] { border-color: var(--cyan); color: var(--cyan); }
+.head-icon[aria-pressed="false"] { color: var(--faint); }
+
+/* -------------------------------------------------------------------------
+   Mobile endpoint menu
+   ------------------------------------------------------------------------- */
+.endpoint-menu {
+  position: fixed;
+  z-index: 120;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: max(1rem, env(safe-area-inset-top, 0px)) 1.15rem 1.5rem;
+  background: color-mix(in srgb, var(--bg) 97%, transparent);
+  backdrop-filter: blur(20px);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  /* Visibility is discrete: delay it by the fade on close so the panel stays
+     visible while it animates out, but flip it instantly on open — otherwise
+     the element is still unfocusable while the open transition runs. */
+  transition:
+    opacity var(--dur) var(--ease-out),
+    transform var(--dur) var(--ease-out),
+    visibility 0s linear var(--dur);
+}
+.endpoint-menu.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition:
+    opacity var(--dur) var(--ease-out),
+    transform var(--dur) var(--ease-out),
+    visibility 0s linear 0s;
+}
+
+.endpoint-menu-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid var(--line-dim);
+  padding-bottom: .85rem;
+}
+.endpoint-menu-title {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  color: var(--muted);
+  font: 600 .62rem/1 var(--font-mono);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+.pulse-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 9px var(--green);
+  animation: blink 1.3s ease-in-out infinite;
+}
+
+.endpoint-list {
+  display: grid;
+  gap: .5rem;
+  margin: 1.4rem 0 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+.endpoint-list a {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: .85rem;
+  min-height: 60px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: .7rem .8rem;
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  color: var(--text);
+  transition: border-color var(--dur-fast), background var(--dur-fast);
+}
+.endpoint-list a:hover,
+.endpoint-list a:focus-visible {
+  border-color: var(--cyan);
+  background: color-mix(in srgb, var(--surface2) 92%, transparent);
+}
+.endpoint-list a[aria-current="true"] { border-color: var(--orange); }
+.endpoint-label { display: grid; gap: .18rem; min-width: 0; }
+.endpoint-label b { font: 700 .82rem/1.2 var(--font-display); letter-spacing: .01em; }
+.endpoint-label small { color: var(--muted); font: 500 .6rem/1.35 var(--font-mono); }
+.endpoint-list a > svg { color: var(--cyan); }
+
+.endpoint-menu-foot {
+  margin: auto 0 0;
+  border-top: 1px solid var(--line-dim);
+  padding-top: .9rem;
+  color: var(--faint);
+  font: 500 .56rem/1.4 var(--font-mono);
+  letter-spacing: .05em;
+}
+
+/* Keep neighbouring 44x44 hit areas from overlapping: 34px control + 10px gap. */
+.header .head-actions { gap: .62rem; }
+
+/* Reclaim header room before the nav competes for it: the clock is the least
+   important affordance between the desktop and tablet breakpoints. */
+@media (max-width: 1280px) {
+  .header .clock { display: none; }
+}
+
+/* The trigger only exists below the desktop breakpoint. Scoped to .head-actions
+   so it reliably beats the shared .head-icon display. */
+.head-actions .menu-trigger { display: none; }
+
+@media (max-width: 1100px) {
+  .api-nav { display: none; }
+  .head-actions .menu-trigger { display: grid; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .endpoint-menu { transition: none; }
+}

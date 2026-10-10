@@ -1,0 +1,120 @@
+/* =========================================================================
+   Project card: summary face flips to an API response face.
+   Transform-only, so nothing on the page reflows when a card is opened.
+   ========================================================================= */
+
+.card-stage {
+  display: grid;
+  perspective: 1600px;
+}
+
+.card-face {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  backface-visibility: hidden;
+  transform-origin: center center;
+  transition: transform 560ms var(--ease-out), opacity 320ms var(--ease-out);
+}
+
+.card-face--response {
+  transform: rotateY(180deg);
+  opacity: 0;
+  border-left: 2px solid var(--orange);
+  background: linear-gradient(150deg, var(--surface2), color-mix(in srgb, var(--surface) 88%, transparent));
+}
+
+.project-card[data-open="true"] .card-face--front {
+  transform: rotateY(-180deg);
+  opacity: 0;
+}
+.project-card[data-open="true"] .card-face--response {
+  transform: rotateY(0deg);
+  opacity: 1;
+}
+
+/* Both faces stay the same height, so the container height never animates. */
+.card-face--front { height: 100%; }
+
+/* ---------- Summary face ---------- */
+.project-body header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: .6rem;
+}
+
+.card-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  width: max-content;
+  margin-top: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: .6rem .78rem;
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+  color: var(--cyan);
+  font: 600 .57rem/1 var(--font-mono);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  transition: border-color var(--dur-fast), color var(--dur-fast), background var(--dur-fast);
+}
+.card-toggle:hover { border-color: var(--cyan); background: color-mix(in srgb, var(--cyan) 10%, transparent); }
+
+/* ---------- Response face ---------- */
+.response-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+  border-bottom: 1px solid var(--line-dim);
+  padding: 1.1rem 1.28rem .9rem;
+}
+.response-head code {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--muted);
+  font: 500 .62rem/1.4 var(--font-mono);
+}
+
+.response-body {
+  flex: 1;
+  margin: 0;
+  padding: 1.05rem 1.28rem;
+  overflow-x: auto;
+  color: var(--muted);
+  font: 500 .68rem/1.75 var(--font-mono);
+  white-space: pre;
+  tab-size: 2;
+}
+.json-row { display: block; }
+.json-brace { display: block; color: var(--faint); }
+.json-key { color: var(--cyan); }
+.json-colon { color: var(--faint); }
+.json-value { color: var(--green); }
+
+.response-note {
+  margin: 0;
+  padding: 0 1.28rem;
+  color: var(--faint);
+  font: 500 .58rem/1.5 var(--font-mono);
+}
+
+.card-face--response .card-toggle {
+  margin: 1rem 1.28rem 1.28rem;
+  border-color: var(--orange);
+  color: var(--orange);
+}
+.card-face--response .card-toggle:hover {
+  background: color-mix(in srgb, var(--orange) 12%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Swap faces without the 3D travel. */
+  .card-face { transition: opacity 120ms linear; transform: none; }
+  .card-face--response { opacity: 0; }
+  .project-card[data-open="true"] .card-face--front { opacity: 0; transform: none; }
+  .project-card[data-open="true"] .card-face--response { opacity: 1; transform: none; }
+}

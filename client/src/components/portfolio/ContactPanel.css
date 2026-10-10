@@ -1,0 +1,151 @@
+/* =========================================================================
+   POST /contact — request form with inline validation and a 201 response.
+   ========================================================================= */
+
+.endpoint-form {
+  display: grid;
+  gap: .85rem;
+  align-content: start;
+  border: 1px solid var(--line);
+  border-top: 2px solid var(--method-post);
+  border-radius: 3px;
+  padding: clamp(1.1rem, 2.5vw, 1.55rem);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--surface) 95%, transparent), var(--surface2));
+}
+
+.endpoint-form .form-heading {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  border-bottom: 1px solid var(--line-dim);
+  padding-bottom: .8rem;
+}
+.endpoint-form .form-heading code {
+  color: var(--muted);
+  font: 600 .7rem/1 var(--font-mono);
+}
+
+/* Compact error summary: one place that explains every rejection. */
+.form-summary {
+  display: flex;
+  gap: .55rem;
+  border: 1px solid color-mix(in srgb, var(--danger) 45%, transparent);
+  border-left: 3px solid var(--danger);
+  border-radius: 2px;
+  padding: .7rem .8rem;
+  background: color-mix(in srgb, var(--danger) 9%, transparent);
+  color: var(--text);
+}
+.form-summary > svg { flex: 0 0 auto; margin-top: .16rem; color: var(--danger); }
+.form-summary b { display: block; margin-bottom: .3rem; color: var(--danger); font: 700 .62rem/1 var(--font-mono); letter-spacing: .08em; }
+.form-summary ul { display: grid; gap: .24rem; margin: 0; padding-left: 1rem; }
+.form-summary a { color: var(--text); font-size: .82rem; line-height: 1.4; text-decoration: underline; }
+.form-summary a:hover { color: var(--danger); }
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .72rem;
+}
+
+.endpoint-form label {
+  display: grid;
+  gap: .4rem;
+}
+.endpoint-form label > span {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  color: var(--orange);
+  font: 600 .54rem/1 var(--font-mono);
+  letter-spacing: .11em;
+  text-transform: uppercase;
+}
+.endpoint-form label > span i { color: var(--danger); font-style: normal; }
+
+.endpoint-form input,
+.endpoint-form textarea {
+  width: 100%;
+  min-height: var(--tap);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: .8rem .85rem;
+  resize: vertical;
+  color: var(--text);
+  background: color-mix(in srgb, var(--bg) 65%, transparent);
+  font: 500 .78rem/1.5 var(--font-mono);
+  transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
+}
+.endpoint-form input::placeholder,
+.endpoint-form textarea::placeholder { color: var(--faint); }
+.endpoint-form input:focus,
+.endpoint-form textarea:focus {
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cyan) 16%, transparent);
+  outline: none;
+}
+/* Invalid state is never colour-only: the message below carries the meaning. */
+.endpoint-form [aria-invalid="true"] { border-color: var(--danger); }
+.endpoint-form [aria-invalid="true"]:focus { box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger) 18%, transparent); }
+
+.field-error {
+  display: flex;
+  align-items: flex-start;
+  gap: .3rem;
+  color: var(--danger);
+  font: 500 .68rem/1.4 var(--font-body);
+}
+.field-error::before { content: "!"; font-weight: 700; }
+
+.form-actions { display: flex; align-items: center; gap: .8rem; }
+
+.endpoint-form button[type="submit"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  min-height: var(--tap);
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  border: 1px solid var(--orange);
+  padding: .85rem 1.05rem;
+  color: var(--on-accent);
+  background: var(--orange);
+  font: 700 .62rem/1 var(--font-mono);
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  transition: filter var(--dur-fast), box-shadow var(--dur-fast);
+}
+.endpoint-form button[type="submit"]:hover { box-shadow: 0 12px 24px color-mix(in srgb, var(--orange) 30%, transparent); }
+.endpoint-form button[type="submit"]:disabled { filter: saturate(.45) brightness(.85); cursor: progress; }
+
+.form-status {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .4rem;
+  margin: 0;
+  min-height: 1.4rem;
+  color: var(--muted);
+  font: 500 .72rem/1.5 var(--font-mono);
+}
+.form-status[data-tone="ok"] { color: var(--green); }
+.form-status[data-tone="error"] { color: var(--danger); }
+.form-status b { letter-spacing: .06em; }
+
+/* 201 Created confirmation animates in without moving the layout. */
+.form-status[data-tone="ok"] {
+  animation: created-in 420ms var(--ease-out) both;
+}
+@keyframes created-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 640px) {
+  .form-grid { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .form-status[data-tone="ok"] { animation: none; }
+  .endpoint-form input, .endpoint-form textarea, .endpoint-form button { transition: none; }
+}
