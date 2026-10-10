@@ -2,14 +2,58 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <!-- viewport-fit=cover is required for env(safe-area-inset-*) to resolve on notched devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#030608" />
     <title>Om Kumar Mishra | Java Backend Developer</title>
-    <meta name="description" content="Om Kumar Mishra — Java Backend Developer building structured Spring Boot systems, REST APIs, and relational data models." />
+    <meta
+      name="description"
+      content="Om Kumar Mishra — Java Backend Developer building structured Spring Boot systems, REST APIs, and relational data models."
+    />
+    <meta name="author" content="Om Kumar Mishra" />
     <link rel="icon" type="image/x-icon" href="/om-monogram-favicon.ico" />
+    <link rel="apple-touch-icon" href="/om-monogram-touch-icon.png" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Om Kumar Mishra" />
+    <meta property="og:title" content="Om Kumar Mishra | Java Backend Developer" />
+    <meta
+      property="og:description"
+      content="Java Backend Developer building structured Spring Boot systems, REST APIs, and relational data models."
+    />
+    <meta property="og:locale" content="en_IN" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Om Kumar Mishra | Java Backend Developer" />
+    <meta
+      name="twitter:description"
+      content="Java Backend Developer building structured Spring Boot systems, REST APIs, and relational data models."
+    />
+
+    <!--
+      Absolute-URL tags. Crawlers ignore relative URLs here, so this block is
+      emitted only when a public origin is known (see vitePluginSiteMeta in
+      vite.config.ts). Set VITE_SITE_URL to your domain to enable it; on Vercel
+      the build falls back to the deployment URL automatically.
+    -->
+    <!-- site-url:start -->
+    <link rel="canonical" href="%VITE_SITE_URL%/" />
+    <meta property="og:url" content="%VITE_SITE_URL%/" />
+    <meta property="og:image" content="%VITE_SITE_URL%/og-cover.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Om Kumar Mishra — Java Backend Developer" />
+    <meta name="twitter:image" content="%VITE_SITE_URL%/og-cover.png" />
+    <meta name="twitter:image:alt" content="Om Kumar Mishra — Java Backend Developer" />
+    <!-- site-url:end -->
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <!-- Analytics stays out of the build until VITE_ANALYTICS_* are configured (see vite.config.ts) -->
     <script defer src="%VITE_ANALYTICS_ENDPOINT%/umami" data-website-id="%VITE_ANALYTICS_WEBSITE_ID%"></script>
   </body>
 </html>
