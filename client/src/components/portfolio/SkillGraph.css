@@ -55,7 +55,9 @@
 }
 .graph-layer header span { color: var(--faint); font: 500 .54rem/1.3 var(--font-mono); }
 
-.graph-nodes { display: grid; gap: .42rem; }
+/* .5rem, not .42rem: the 44px hit boxes on adjacent nodes need 8px between
+   them, and these nodes are stacked directly. */
+.graph-nodes { display: grid; gap: .5rem; }
 
 /* Nodes are real buttons: >=44px tall, keyboard operable, never hover-only. */
 .graph-node {

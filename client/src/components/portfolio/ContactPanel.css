@@ -73,7 +73,10 @@
   resize: vertical;
   color: var(--text);
   background: color-mix(in srgb, var(--bg) 65%, transparent);
-  font: 500 .78rem/1.5 var(--font-mono);
+  /* 16px, not .78rem: iOS Safari zooms the whole viewport when a field under
+     16px receives focus. The old maximum-scale=1 hid that by blocking zoom
+     outright; now that pinch-zoom works again, the fields have to be 16px. */
+  font: 500 1rem/1.5 var(--font-mono);
   transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
 }
 .endpoint-form input::placeholder,

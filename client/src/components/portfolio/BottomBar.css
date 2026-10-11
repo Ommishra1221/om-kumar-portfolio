@@ -12,7 +12,9 @@
   inset: auto 0 0 0;
   display: none;
   grid-template-columns: repeat(5, 1fr);
-  gap: 2px;
+  /* 8px, not 2px: adjacent actions are separate tap targets and must keep the
+     8px minimum clearance. Each column stays ~69px wide, far above 44px. */
+  gap: 8px;
   padding: 0 .35rem;
   padding-bottom: env(safe-area-inset-bottom, 0px);
   border-top: 1px solid color-mix(in srgb, var(--line) 85%, transparent);

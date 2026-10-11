@@ -20,7 +20,7 @@ button,input,textarea { font:inherit; }
 button { cursor:pointer; }
 button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,[tabindex]:focus-visible { outline:2px solid var(--focus); outline-offset:3px; border-radius:2px; }
 /* Keep the tap delay away and never rely on hover alone. */
-a,button,[role="button"],[tabindex] { touch-action:manipulation; }
+a,button,[role="button"],[tabindex],input,textarea,select { touch-action:manipulation; }
 
 .portfolio { position:relative; isolation:isolate; overflow:clip; background:var(--bg); }
 .ambient { position:fixed; z-index:-2; inset:0; pointer-events:none; opacity:.72; background-image:linear-gradient(rgba(19,86,116,.105) 1px,transparent 1px),linear-gradient(90deg,rgba(19,86,116,.105) 1px,transparent 1px),radial-gradient(circle at 60% 6%,rgba(0,212,255,.09),transparent 25%),radial-gradient(circle at 10% 55%,rgba(255,107,0,.07),transparent 18%); background-size:48px 48px,48px 48px,auto,auto; mask-image:linear-gradient(black,rgba(0,0,0,.83) 67%,transparent); }
@@ -40,6 +40,8 @@ a,button,[role="button"],[tabindex] { touch-action:manipulation; }
 /* Header controls are styled by .head-icon / .resume. The previous generic
    `.head-actions button` rule was removed: at specificity 0-1-1 it silently
    overrode later single-class rules such as .menu-trigger. */
+/* Spacing for the header controls lives in ApiNav.css (.header .head-actions),
+   where the 44px hit boxes are accounted for. */
 .head-actions { display:flex; justify-content:flex-end; align-items:center; gap:.55rem; }.clock { display:inline-flex; gap:.35rem; align-items:center; color:var(--muted); font:500 .55rem/1 'JetBrains Mono',monospace; white-space:nowrap; }.clock i,.footer-status i,.contact-callout i,.availability-card i { width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 9px var(--green); animation:blink 1.3s ease-in-out infinite; }.resume,.mobile-resume { display:inline-flex; align-items:center; gap:.4rem; clip-path:polygon(7px 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%,0 7px); border:1px solid var(--orange); padding:.56rem .74rem; color:var(--orange); font:600 .58rem/1 'JetBrains Mono',monospace; letter-spacing:.08em; text-transform:uppercase; transition:background .2s,color .2s,box-shadow .2s; }.resume:hover,.mobile-resume:hover { color:var(--on-accent); background:var(--orange); box-shadow:0 0 18px rgba(255,107,0,.25); }.hamburger { display:none!important; }
 .mobile-menu { position:fixed; z-index:90; inset:0; display:none; opacity:0; pointer-events:none; flex-direction:column; justify-content:center; padding:2rem; background:rgba(3,6,8,.97); backdrop-filter:blur(22px); transition:opacity .24s var(--ease-out); }.mobile-menu.open { opacity:1; pointer-events:auto; }.close { position:absolute; top:1.25rem; right:1.25rem; display:grid; place-items:center; width:42px; height:42px; border:1px solid var(--line); background:var(--surface); color:var(--orange); }.mobile-menu nav { display:grid; gap:1rem; margin-top:3rem; }.mobile-menu nav a { display:grid; grid-template-columns:36px 1fr auto; align-items:center; gap:1rem; font:700 clamp(1.45rem,8vw,2.7rem)/1 Orbitron,sans-serif; text-transform:uppercase; }.mobile-menu nav small { color:var(--orange); font:500 .56rem/1 'JetBrains Mono',monospace; }.mobile-menu nav svg { color:var(--cyan); }.mobile-resume { width:max-content; margin-top:2.8rem; }
 

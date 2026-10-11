@@ -154,7 +154,12 @@
 }
 
 /* Keep neighbouring 44x44 hit areas from overlapping: 34px control + 10px gap. */
-.header .head-actions { gap: .62rem; }
+/* 1.2rem here, not the .62rem this used to be: each icon button is 34px wide
+   but carries a 44px hit box (.hit), so centres have to sit 52px apart for
+   neighbours to keep the 8px minimum clearance. At .62rem the two hit boxes
+   overlapped by 0.1px. Scoped to .header because this is the only place the
+   controls sit shoulder to shoulder. */
+.header .head-actions { gap: 1.2rem; }
 
 /* Reclaim header room before the nav competes for it: the clock is the least
    important affordance between the desktop and tablet breakpoints. */
