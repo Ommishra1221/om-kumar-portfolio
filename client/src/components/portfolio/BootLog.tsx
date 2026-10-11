@@ -34,17 +34,19 @@ export default function BootLog({ onDone }: Props) {
 
       setLeaving(true);
       // Let the fade-out play before handing control back to the hero.
-      window.setTimeout(onDone, 320);
+      window.setTimeout(onDone, 260);
     },
     [onDone]
   );
 
   // Reveal log lines progressively, then stamp the summary and finish.
+  // The pace is tuned so the whole sequence lands at roughly the 1.2s its own
+  // summary line claims, and so the overlay stops covering the hero sooner.
   useEffect(() => {
     const timers = bootLines.map((_, index) =>
-      window.setTimeout(() => setStep(index + 1), 150 * (index + 1))
+      window.setTimeout(() => setStep(index + 1), 120 * (index + 1))
     );
-    timers.push(window.setTimeout(() => finish("complete"), 150 * bootLines.length + 560));
+    timers.push(window.setTimeout(() => finish("complete"), 120 * bootLines.length + 420));
 
     return () => timers.forEach(window.clearTimeout);
   }, [finish]);

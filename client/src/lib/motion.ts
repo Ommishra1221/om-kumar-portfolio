@@ -6,8 +6,11 @@ import { useEffect } from "react";
  * Design rules applied here, straight from the design-system checklist:
  * - Only transform and opacity are animated; never width/height.
  * - Entrances are short and ease out; nothing animates for longer than it needs.
- * - `toggleActions: "play none none reverse"` avoids re-triggering on every
- *   scroll direction change.
+ * - `toggleActions: "play none none none"`: once something has been revealed it
+ *   stays revealed. Reversing on scroll-back looked nice in isolation but could
+ *   strand elements at opacity 0 whenever a trigger's start point shifted after
+ *   it had already played (below-the-fold sections lay out lazily, which changes
+ *   the document height). Content that can disappear is a bug, not a flourish.
  * - GSAP itself is code-split, so it never blocks first paint.
  * - Reduced-motion visitors get no splitting, no reveals and no pinning.
  */
@@ -82,7 +85,7 @@ export function useScrollStorytelling(): void {
             scrollTrigger: {
               trigger: element,
               start: "top 90%",
-              toggleActions: "play none none reverse",
+              toggleActions: "play none none none",
             },
           });
           cleanups.push(() => tween.scrollTrigger?.kill());
@@ -100,7 +103,7 @@ export function useScrollStorytelling(): void {
             scrollTrigger: {
               trigger: group,
               start: "top 88%",
-              toggleActions: "play none none reverse",
+              toggleActions: "play none none none",
             },
           });
           cleanups.push(() => tween.scrollTrigger?.kill());
@@ -125,7 +128,7 @@ export function useScrollStorytelling(): void {
             scrollTrigger: {
               trigger: element,
               start: "top 88%",
-              toggleActions: "play none none reverse",
+              toggleActions: "play none none none",
             },
           });
 
@@ -144,7 +147,7 @@ export function useScrollStorytelling(): void {
             transformOrigin: "left center",
             duration: 0.55,
             ease: "power2.out",
-            scrollTrigger: { trigger: rule, start: "top 95%", toggleActions: "play none none reverse" },
+            scrollTrigger: { trigger: rule, start: "top 95%", toggleActions: "play none none none" },
           });
           cleanups.push(() => tween.scrollTrigger?.kill());
         });
@@ -195,7 +198,31 @@ export function useScrollStorytelling(): void {
         });
       }
 
-      teardown = () => matchMedia.revert();
+      // Below-the-fold sections lay out lazily (the content-visibility rule in
+      // index.css), so the document height grows as the visitor scrolls and a
+      // trigger measured earlier can drift out of step with its element.
+      // Re-measure when a section's layout state settles.
+      const cvEvent = "contentvisibilityautostatechange";
+      const teardownHooks: Array<() => void> = [];
+
+      if (cvEvent in document) {
+        let frame = 0;
+        const onStateChange = () => {
+          window.cancelAnimationFrame(frame);
+          frame = window.requestAnimationFrame(() => ScrollTrigger.refresh());
+        };
+
+        document.addEventListener(cvEvent, onStateChange, true);
+        teardownHooks.push(() => {
+          document.removeEventListener(cvEvent, onStateChange, true);
+          window.cancelAnimationFrame(frame);
+        });
+      }
+
+      teardown = () => {
+        teardownHooks.forEach((fn) => fn());
+        matchMedia.revert();
+      };
     })();
 
     return () => {
