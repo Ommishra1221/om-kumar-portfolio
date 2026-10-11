@@ -7,6 +7,7 @@ import "./SkillGraph.css";
 const layerMeta: Array<{ id: GraphNode["layer"]; label: string; hint: string }> = [
   { id: "language", label: "Language", hint: "Where the code starts" },
   { id: "framework", label: "Framework", hint: "Spring's wiring" },
+  { id: "architecture", label: "Architecture", hint: "How services are split" },
   { id: "security", label: "Security", hint: "Access control" },
   { id: "api", label: "API surface", hint: "What clients call" },
   { id: "store", label: "Data stores", hint: "Where state lives" },

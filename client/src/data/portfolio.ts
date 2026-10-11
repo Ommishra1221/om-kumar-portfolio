@@ -79,7 +79,7 @@ export const quickActions = [
 ] as const;
 
 export const capabilities = [
-  { icon: "server", title: "Backend architecture", meta: "Java · Spring Boot · MVC", tone: "orange" },
+  { icon: "server", title: "Backend architecture", meta: "Java · Spring Boot · Microservices", tone: "orange" },
   { icon: "shield", title: "Secure access", meta: "JWT · RBAC · Spring Security", tone: "green" },
   { icon: "database", title: "Data modeling", meta: "MySQL · PostgreSQL · MongoDB", tone: "cyan" },
   { icon: "terminal", title: "API delivery", meta: "REST · Postman · Maven", tone: "blue" },
@@ -129,7 +129,7 @@ export const skillCodes: Record<string, string> = {
 export type GraphNode = {
   id: string;
   label: string;
-  layer: "language" | "framework" | "security" | "api" | "data" | "store" | "quality";
+  layer: "language" | "framework" | "architecture" | "security" | "api" | "data" | "store" | "quality";
   detail: string;
 };
 
@@ -139,6 +139,12 @@ export const graphNodes: GraphNode[] = [
   { id: "boot", label: "Spring Boot", layer: "framework", detail: "Bootstrap, dependency injection and auto-configuration." },
   { id: "mvc", label: "Spring MVC", layer: "framework", detail: "Controller layer: routing, binding, response shaping." },
   { id: "jpa", label: "JPA/Hibernate", layer: "framework", detail: "Entity mapping and persistence between objects and tables." },
+  {
+    id: "microservices",
+    label: "Microservices",
+    layer: "architecture",
+    detail: "Splitting a backend into independently deployable services behind clear API boundaries.",
+  },
   { id: "security", label: "Spring Security", layer: "security", detail: "Authentication and authorization filter chain." },
   { id: "jwt", label: "JWT", layer: "security", detail: "Stateless token sessions for API clients." },
   { id: "rbac", label: "RBAC", layer: "security", detail: "Role-based endpoint access control." },
@@ -158,6 +164,8 @@ export const graphEdges: Array<[string, string]> = [
   ["boot", "mvc"],
   ["boot", "security"],
   ["boot", "jpa"],
+  ["boot", "microservices"],
+  ["microservices", "rest"],
   ["boot", "junit"],
   ["boot", "maven"],
   ["mvc", "rest"],

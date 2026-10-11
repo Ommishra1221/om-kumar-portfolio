@@ -360,7 +360,7 @@ export default function Home() {
               <b>MySQL and PostgreSQL</b> for structured persistence and JPA/Hibernate for practical data access.
             </p>
             <div className="pills">
-              {["Java", "Spring Boot", "Spring Security", "MySQL", "JPA / Hibernate", "REST APIs", "JWT", "Maven"].map((item) => (
+              {["Java", "Spring Boot", "Microservices", "Spring Security", "MySQL", "JPA / Hibernate", "REST APIs", "JWT", "Maven"].map((item) => (
                 <span key={item}>{item}</span>
               ))}
             </div>
