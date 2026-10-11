@@ -108,25 +108,42 @@ async function ogCover() {
   return { out, size: info.size, textRendered: textRenders };
 }
 
-/** Home-screen icon, rasterised from the largest PNG frame inside the .ico. */
-async function touchIcon() {
+/**
+ * Monogram renders, rasterised from the largest PNG frame inside the .ico.
+ *
+ * The .ico itself is 171 kB because it carries six frames up to 256x256 — far
+ * too much to serve for a 31px header mark or a tab icon, so these small PNGs
+ * replace it everywhere it is referenced.
+ */
+async function monogramRenders() {
   const frame = largestIcoFrame(await readFile(monogram));
   if (!frame) throw new Error("no PNG frame found inside the monogram .ico");
 
-  const out = path.join(publicDir, "om-monogram-touch-icon.png");
-  const info = await sharp(frame)
-    .resize(180, 180, { fit: "contain", background: { r: 3, g: 6, b: 8, alpha: 1 } })
-    .png({ compressionLevel: 9 })
-    .toFile(out);
+  const targets = [
+    { name: "om-monogram-touch-icon.png", size: 180 },
+    { name: "om-monogram-96.png", size: 96 },
+    { name: "favicon-32.png", size: 32 },
+    { name: "favicon-16.png", size: 16 },
+  ];
 
-  return { out, size: info.size };
+  const written = [];
+  for (const target of targets) {
+    const out = path.join(publicDir, target.name);
+    const info = await sharp(frame)
+      .resize(target.size, target.size, { fit: "contain", background: { r: 3, g: 6, b: 8, alpha: 1 } })
+      .png({ compressionLevel: 9, effort: 9 })
+      .toFile(out);
+    written.push({ out, size: info.size });
+  }
+
+  return written.reduce((largest, current) => (current.size > largest.size ? current : largest));
 }
 
 await mkdir(publicDir, { recursive: true });
 
-const results = await Promise.allSettled([portrait(), ogCover(), touchIcon()]);
+const results = await Promise.allSettled([portrait(), ogCover(), monogramRenders()]);
 
-const labels = ["portrait webp", "og cover", "touch icon"];
+const labels = ["portrait webp", "og cover", "monogram renders (4 sizes)"];
 results.forEach((result, index) => {
   const label = labels[index];
   if (result.status === "fulfilled") {

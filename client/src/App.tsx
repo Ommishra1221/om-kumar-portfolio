@@ -1,11 +1,13 @@
-import { Toaster } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 
+// NOTE: The Toaster (sonner) and TooltipProvider (Radix) wrappers were removed
+// from this shell: nothing in the app renders a toast or a tooltip, and both
+// pulled their libraries into the initial bundle. The components themselves are
+// still in components/ui if you add either feature later.
 
 function Router() {
   return (
@@ -30,10 +32,7 @@ function App() {
         defaultTheme="light"
         // switchable
       >
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
+        <Router />
       </ThemeProvider>
     </ErrorBoundary>
   );

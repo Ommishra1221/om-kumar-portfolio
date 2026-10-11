@@ -12,15 +12,24 @@
       content="Om Kumar Mishra — Java Backend Developer building structured Spring Boot systems, REST APIs, and relational data models."
     />
     <meta name="author" content="Om Kumar Mishra" />
-    <link rel="icon" type="image/x-icon" href="/om-monogram-favicon.ico" />
+    <!-- Small PNG renders instead of the 171 kB multi-frame .ico -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
     <link rel="apple-touch-icon" href="/om-monogram-touch-icon.png" />
+
+    <!--
+      The hero portrait is the largest contentful paint candidate, but a
+      client-rendered page cannot discover it until React has booted. Preloading
+      it here starts the request during head parsing instead.
+    -->
+    <link rel="preload" as="image" href="/om-kumar-mishra-portrait.webp" type="image/webp" />
 
     <!-- Fonts: linked instead of @import-ed so they no longer block the CSS waterfall -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@600;700;800&display=swap"
     />
 
     <!-- Open Graph -->

@@ -19,7 +19,8 @@ export const profile = {
   resume: "/om-kumar-mishra-resume.pdf",
   portrait: "/om-kumar-mishra-portrait.webp",
   portraitFallback: "/om-kumar-mishra-portrait.png",
-  logo: "/om-monogram-favicon.ico",
+  // 96px PNG rather than the 171 kB .ico, which is far too heavy for a 31px mark.
+  logo: "/om-monogram-96.png",
 } as const;
 
 export const intro =
