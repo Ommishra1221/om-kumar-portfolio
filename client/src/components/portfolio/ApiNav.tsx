@@ -68,9 +68,11 @@ export function MobileNav({ menuOpen, onMenuOpen, onMenuClose, activeId }: Props
     const items = () =>
       Array.from(panel?.querySelectorAll<HTMLElement>("a[href], button:not([disabled])") ?? []);
 
-    // Land on the first destination rather than the close button.
+    // Land on the first destination rather than the close button. The timer is
+    // tracked so a quick close cannot leave a stray focus call pointing at a
+    // link inside the now-closed sheet.
     const target = panel?.querySelector<HTMLElement>(".endpoint-list a") ?? items()[0];
-    window.setTimeout(() => target?.focus(), 40);
+    const focusTimer = window.setTimeout(() => target?.focus(), 40);
 
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -98,6 +100,7 @@ export function MobileNav({ menuOpen, onMenuOpen, onMenuClose, activeId }: Props
     document.addEventListener("keydown", onKey);
 
     return () => {
+      window.clearTimeout(focusTimer);
       document.removeEventListener("keydown", onKey);
       // Deterministic: focus the control that opened the sheet, even if the
       // click itself never moved focus (programmatic or touch activation).
@@ -127,6 +130,9 @@ export function MobileNav({ menuOpen, onMenuOpen, onMenuClose, activeId }: Props
         ref={panelRef}
         className={`endpoint-menu ${menuOpen ? "is-open" : ""}`}
         aria-hidden={!menuOpen}
+        // aria-hidden alone leaves the links tabbable; inert takes the closed
+        // sheet out of the tab order and makes focus inside it impossible.
+        inert={!menuOpen}
         aria-label="Endpoint navigation"
         role="dialog"
         aria-modal="true"
