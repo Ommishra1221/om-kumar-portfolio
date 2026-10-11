@@ -1,0 +1,105 @@
+/* =========================================================================
+   Touch feedback for the Languages chips (the GET /skills grid).
+
+   Loaded from Home.tsx, next to the markup it belongs to. Specificity is
+   raised deliberately (`.skill-categories .tile`) instead of relying on source
+   order: the bundler places this file ahead of index.css, and a press has to
+   win over `.tile:hover` regardless of which sheet lands first.
+
+   Press states change transform/shadow/colour only — never size, border width
+   or spacing — so a tap can never reflow the grid around it.
+   ========================================================================= */
+
+/* Chips are real buttons now. Reset the UA button chrome so their geometry
+   matches the label spans in the neighbouring cards exactly. */
+.skill-categories button.tile {
+  padding: 0;
+  /* Kill the 300ms double-tap-zoom wait on the chips themselves. */
+  touch-action: manipulation;
+}
+
+/* The header now holds a control next to the meta line, so keep the meta
+   right-aligned. Cards without that control are unaffected: with two children
+   `space-between` already pushed this <small> to the right edge. */
+.skill-categories header > small {
+  margin-left: auto;
+}
+
+/* Pressed: a small scale plus a tone-coloured glow, resolved in 90ms so it
+   reads as immediate rather than animated.
+
+   `:active` is the primary signal; `[data-pressing]` is the same state set from
+   the pointerdown handler, because engines differ in when (or whether) a touch
+   turns into `:active`. */
+.skill-categories .tile:active,
+.skill-categories .tile[data-pressing="true"] {
+  transform: scale(.96);
+  transition-duration: 90ms;
+  border-color: var(--tone);
+  background: linear-gradient(145deg, color-mix(in srgb, var(--tone) 19%, var(--surface)), rgba(3, 9, 15, .5));
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--tone) 42%, transparent),
+    0 0 20px color-mix(in srgb, var(--tone) 24%, transparent);
+}
+
+.skill-categories .tile:active:after,
+.skill-categories .tile[data-pressing="true"]:after {
+  transform: scaleX(1);
+}
+
+/* Selection is a held state: same tone language as a core tile, kept after the
+   finger lifts. Also exposed as aria-pressed, so colour is never the only
+   indicator. */
+.skill-categories .tile[data-selected="true"] {
+  border-color: color-mix(in srgb, var(--tone) 58%, var(--line));
+  background: linear-gradient(145deg, color-mix(in srgb, var(--tone) 13%, var(--surface)), rgba(3, 9, 15, .52));
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--tone) 14%, transparent),
+    0 0 18px color-mix(in srgb, var(--tone) 16%, transparent);
+}
+
+.skill-categories .tile[data-selected="true"]:after {
+  transform: scaleX(1);
+}
+
+.skill-categories .tile[data-selected="true"] > b {
+  border-color: var(--tone);
+  color: var(--tone);
+}
+
+.skill-categories .tile[data-selected="true"] small {
+  color: var(--text);
+}
+
+/* Mute switch for tap sound + vibration. Kept visually at 26px to sit inside
+   the card header; the `.hit` utility extends the tappable area to 44x44px
+   without growing the header (negative block margins absorb the 26px box). */
+.lang-feedback {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  margin-block: -6px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--surface) 84%, transparent);
+  color: var(--tone);
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.lang-feedback[aria-pressed="true"] {
+  border-color: color-mix(in srgb, var(--tone) 52%, var(--line));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--tone) 18%, transparent);
+}
+
+.lang-feedback[aria-pressed="false"] {
+  color: var(--faint);
+}
+
+.lang-feedback:active {
+  border-color: var(--tone);
+}

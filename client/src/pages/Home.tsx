@@ -6,12 +6,12 @@
  * project, employer, date, score and link is real content pulled from
  * `@/data/portfolio` — the API framing is presentation only.
  */
-import { useEffect, useState } from "react";
+import { useEffect, useState, type MouseEvent, type PointerEvent } from "react";
 import {
   Activity, ArrowDown, ArrowRight, ArrowUpRight, Award, Box, BriefcaseBusiness, CheckCircle2,
   ChevronDown, CircleDot, Clock3, Code2, Database, Download, Github, GraduationCap, Layers3,
   Linkedin, Mail, MapPin, Moon, Send, ServerCog, ShieldCheck, Sparkles, Sun, Terminal,
-  Vibrate, VibrateOff,
+  Vibrate, VibrateOff, Volume2, VolumeX,
 } from "lucide-react";
 import {
   capabilities, credentials, coreSkills, education, endpoints, experiences, intro,
@@ -25,13 +25,28 @@ import PacketField from "@/components/portfolio/PacketField";
 import ProjectCard from "@/components/portfolio/ProjectCard";
 import SkillGraph from "@/components/portfolio/SkillGraph";
 import { BannerArt, SystemMap } from "@/components/portfolio/ProceduralArt";
-import { useHapticPreference, usePrefersReducedMotion } from "@/hooks/useHaptics";
+import { useFeedbackPreference, useHapticPreference, usePrefersReducedMotion } from "@/hooks/useHaptics";
 import { haptic } from "@/lib/haptics";
 import { useScrollStorytelling } from "@/lib/motion";
+import { tick } from "@/lib/sfx";
 import "./project-links.css";
+import "./language-feedback.css";
 
 const capabilityIcons = { server: ServerCog, shield: ShieldCheck, database: Database, terminal: Terminal } as const;
 const groupIcons = { code: Code2, server: ServerCog, database: Database, terminal: Terminal, layers: Layers3, check: CheckCircle2 } as const;
+
+/**
+ * One tick pitch per language, so a tap on the Languages chips has a voice as
+ * well as a buzz. Kept inside a few semitones of each other: distinct, but
+ * still one instrument.
+ */
+const languageTickPitch: Record<string, number> = { Java: 620, SQL: 700, JavaScript: 784, "C++": 880 };
+const defaultTickPitch = 720;
+
+/** Resolve the chip a delegated event started on, or null for the card itself. */
+function chipFrom(event: PointerEvent<HTMLElement> | MouseEvent<HTMLElement>): HTMLElement | null {
+  return event.target instanceof Element ? event.target.closest<HTMLElement>("[data-skill]") : null;
+}
 
 function SectionTitle({ eyebrow, first, accent, note }: { eyebrow: string; first: string; accent: string; note?: string }) {
   return (
@@ -70,6 +85,9 @@ function Rule() {
 export default function Home() {
   const reducedMotion = usePrefersReducedMotion();
   const haptics = useHapticPreference();
+  const feedback = useFeedbackPreference();
+  const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
+  const [pressingSkill, setPressingSkill] = useState<string | null>(null);
   const [booting, setBooting] = useState(() => shouldBoot());
   const [dark, setDark] = useState(true);
   const [menu, setMenu] = useState(false);
@@ -81,6 +99,57 @@ export default function Home() {
   const [showTop, setShowTop] = useState(false);
 
   useScrollStorytelling();
+
+  /*
+   * Languages chips: one delegated pair of listeners per card rather than one
+   * per chip, so adding a language costs nothing.
+   *
+   * Press feedback (vibration + the CSS press state) fires on pointerdown,
+   * which is what makes a tap feel instant. The tick fires on click: a
+   * pointerdown also starts a scroll that merely happens to begin on a chip,
+   * and scrolling has to stay silent. Vibration is pre-empted to the pattern of
+   * the tap that is about to complete, so selecting gets the richer pulse.
+   *
+   * `data-pressing` mirrors `:active` so the press state is the same on every
+   * engine rather than at the mercy of each one's touch-to-active heuristics.
+   */
+  const pressLanguageChip = (event: PointerEvent<HTMLElement>) => {
+    if (!event.isPrimary || (event.pointerType === "mouse" && event.button !== 0)) return;
+
+    const skill = chipFrom(event)?.dataset.skill;
+    if (!skill) return;
+
+    setPressingSkill(skill);
+    haptic(selectedSkill === skill ? "tap" : "success");
+  };
+
+  const releaseLanguageChip = () => setPressingSkill(null);
+
+  const activateLanguageChip = (event: MouseEvent<HTMLElement>) => {
+    const skill = chipFrom(event)?.dataset.skill;
+    if (!skill) return;
+
+    tick({ pitch: languageTickPitch[skill] ?? defaultTickPitch });
+    setSelectedSkill((current) => (current === skill ? null : skill));
+  };
+
+  /*
+   * Confirm the mute switch on the way in as well as on the way out — a control
+   * that silences feedback has to prove it did something.
+   */
+  const toggleFeedback = () => {
+    if (feedback.enabled) {
+      tick({ pitch: 520 });
+      haptic("toggle");
+    }
+
+    feedback.toggle();
+
+    if (!feedback.enabled) {
+      tick({ pitch: 900 });
+      haptic("toggle");
+    }
+  };
 
   // Clock in the visitor's target timezone, not the author's.
   useEffect(() => {
@@ -412,8 +481,17 @@ export default function Home() {
         <div className="skill-categories" data-stagger>
           {skillGroups.map((group, index) => {
             const Icon = groupIcons[group.icon];
+            const isLanguages = group.name === "Languages";
             return (
-              <article className={group.tone} key={group.name}>
+              <article
+                className={group.tone}
+                key={group.name}
+                onPointerDown={isLanguages ? pressLanguageChip : undefined}
+                onPointerUp={isLanguages ? releaseLanguageChip : undefined}
+                onPointerCancel={isLanguages ? releaseLanguageChip : undefined}
+                onPointerLeave={isLanguages ? releaseLanguageChip : undefined}
+                onClick={isLanguages ? activateLanguageChip : undefined}
+              >
                 <header>
                   <span className="category-title">
                     <Icon size={15} aria-hidden="true" />
@@ -422,16 +500,57 @@ export default function Home() {
                   <small>
                     0{index + 1} // {group.items.length} UNITS
                   </small>
+                  {isLanguages && (
+                    <button
+                      type="button"
+                      className="lang-feedback hit"
+                      aria-label="Tap sound and vibration"
+                      aria-pressed={feedback.enabled}
+                      onClick={toggleFeedback}
+                    >
+                      {feedback.enabled ? (
+                        <Volume2 size={14} aria-hidden="true" />
+                      ) : (
+                        <VolumeX size={14} aria-hidden="true" />
+                      )}
+                    </button>
+                  )}
                 </header>
                 <div>
                   {group.items.map((item) => {
                     const isCore = coreSkills.has(item);
-                    return (
-                      <span className={`tile ${isCore ? "core-tile" : ""}`} key={item}>
+                    const selected = selectedSkill === item;
+                    const pressing = pressingSkill === item;
+                    const body = (
+                      <>
                         <b>{skillCodes[item] ?? item.split(/\s+/).map((word) => word[0]).join("").slice(0, 3)}</b>
                         <small>{item}</small>
                         {isCore && <em>CORE</em>}
-                      </span>
+                      </>
+                    );
+
+                    // Languages chips are tappable buttons; the labels in the
+                    // other cards stay non-interactive spans.
+                    if (!isLanguages) {
+                      return (
+                        <span className={`tile ${isCore ? "core-tile" : ""}`} key={item}>
+                          {body}
+                        </span>
+                      );
+                    }
+
+                    return (
+                      <button
+                        type="button"
+                        className={`tile ${isCore ? "core-tile" : ""}`}
+                        key={item}
+                        data-skill={item}
+                        data-selected={selected ? "true" : "false"}
+                        data-pressing={pressing ? "true" : "false"}
+                        aria-pressed={selected}
+                      >
+                        {body}
+                      </button>
                     );
                   })}
                 </div>
