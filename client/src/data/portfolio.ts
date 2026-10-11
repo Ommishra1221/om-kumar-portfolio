@@ -106,7 +106,7 @@ export const skillGroups: SkillGroup[] = [
     icon: "layers",
     name: "Concepts",
     tone: "orange",
-    items: ["OOP", "Data Structures", "Algorithms", "MVC", "RBAC", "Exception Handling"],
+    items: ["OOP", "Data Structures", "Algorithms", "MVC", "RBAC", "Exception Handling", "Microservices"],
   },
   { icon: "check", name: "Testing", tone: "green", items: ["Mockito", "JUnit"] },
 ];
@@ -118,7 +118,7 @@ export const skillCodes: Record<string, string> = {
   "Spring Security": "SEC", "REST APIs": "API", JWT: "JWT", "JPA/Hibernate": "JPA", PostgreSQL: "PG",
   MySQL: "MY", MongoDB: "MDB", Git: "GIT", GitHub: "GH", Postman: "PM", "IntelliJ IDEA": "IDE",
   "VS Code": "VSC", Maven: "MVN", OOP: "OOP", "Data Structures": "DS", Algorithms: "ALG", MVC: "MVC",
-  RBAC: "RBAC", "Exception Handling": "EXC", Mockito: "MCK", JUnit: "JUT",
+  RBAC: "RBAC", "Exception Handling": "EXC", Microservices: "MSV", Mockito: "MCK", JUnit: "JUT",
 };
 
 /**
