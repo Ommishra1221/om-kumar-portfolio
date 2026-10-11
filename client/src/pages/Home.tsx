@@ -6,7 +6,7 @@
  * project, employer, date, score and link is real content pulled from
  * `@/data/portfolio` — the API framing is presentation only.
  */
-import { useEffect, useState, type MouseEvent, type PointerEvent } from "react";
+import { useEffect, useState, type FocusEvent, type MouseEvent, type PointerEvent } from "react";
 import {
   Activity, ArrowDown, ArrowRight, ArrowUpRight, Award, Box, BriefcaseBusiness, CheckCircle2,
   ChevronDown, CircleDot, Clock3, Code2, Database, Download, Github, GraduationCap, Layers3,
@@ -44,7 +44,7 @@ const languageTickPitch: Record<string, number> = { Java: 620, SQL: 700, JavaScr
 const defaultTickPitch = 720;
 
 /** Resolve the chip a delegated event started on, or null for the card itself. */
-function chipFrom(event: PointerEvent<HTMLElement> | MouseEvent<HTMLElement>): HTMLElement | null {
+function chipFrom(event: { target: EventTarget | null }): HTMLElement | null {
   return event.target instanceof Element ? event.target.closest<HTMLElement>("[data-skill]") : null;
 }
 
@@ -124,6 +124,24 @@ export default function Home() {
   };
 
   const releaseLanguageChip = () => setPressingSkill(null);
+
+  /*
+   * The mobile action bar is fixed over the bottom ~45px of the viewport, and a
+   * browser only scrolls a focused element as far as "inside the viewport" — so
+   * a chip reached by Tab can end up with its label behind the bar. Nudging the
+   * page on keyboard focus is what keeps the whole chip visible. Pointer focus is
+   * left alone: no tap should move the page out from under the finger.
+   */
+  const revealFocusedChip = (event: FocusEvent<HTMLElement>) => {
+    const chip = chipFrom(event);
+    if (!chip || !chip.matches(":focus-visible")) return;
+
+    const bar = document.querySelector(".bottom-bar");
+    if (!bar || getComputedStyle(bar).display === "none") return;
+
+    const overlap = chip.getBoundingClientRect().bottom - bar.getBoundingClientRect().top;
+    if (overlap > 0) window.scrollBy(0, overlap + 12);
+  };
 
   const activateLanguageChip = (event: MouseEvent<HTMLElement>) => {
     const skill = chipFrom(event)?.dataset.skill;
@@ -486,6 +504,7 @@ export default function Home() {
               <article
                 className={group.tone}
                 key={group.name}
+                onFocus={isLanguages ? revealFocusedChip : undefined}
                 onPointerDown={isLanguages ? pressLanguageChip : undefined}
                 onPointerUp={isLanguages ? releaseLanguageChip : undefined}
                 onPointerCancel={isLanguages ? releaseLanguageChip : undefined}
