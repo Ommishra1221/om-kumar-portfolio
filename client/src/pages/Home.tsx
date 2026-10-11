@@ -28,6 +28,7 @@ import { BannerArt, SystemMap } from "@/components/portfolio/ProceduralArt";
 import { useFeedbackPreference, useHapticPreference, usePrefersReducedMotion } from "@/hooks/useHaptics";
 import { haptic } from "@/lib/haptics";
 import { useScrollStorytelling } from "@/lib/motion";
+import { useTapFeedback } from "@/hooks/useTapFeedback";
 import { tick } from "@/lib/sfx";
 import "./project-links.css";
 import "./language-feedback.css";
@@ -99,6 +100,8 @@ export default function Home() {
   const [showTop, setShowTop] = useState(false);
 
   useScrollStorytelling();
+  // One delegated listener gives every control on the page press feedback.
+  useTapFeedback();
 
   /*
    * Languages chips: one delegated pair of listeners per card rather than one
@@ -296,7 +299,7 @@ export default function Home() {
             {haptics.enabled ? <Vibrate size={15} /> : <VibrateOff size={15} />}
           </button>
 
-          <a className="resume" href={profile.resume} download onPointerDown={() => haptic("tap")}>
+          <a className="resume" href={profile.resume} download>
             <Download size={13} aria-hidden="true" />
             Résumé
           </a>
@@ -340,12 +343,12 @@ export default function Home() {
             <p className="hero-intro">{intro}</p>
 
             <div className="hero-actions">
-              <a className="primary ripple" href="#projects" onPointerDown={() => haptic("tap")}>
+              <a className="primary ripple" href="#projects">
                 <Box size={16} aria-hidden="true" />
                 Explore my work
                 <ArrowRight size={15} aria-hidden="true" />
               </a>
-              <a className="secondary ripple" href="#contact" onPointerDown={() => haptic("tap")}>
+              <a className="secondary ripple" href="#contact">
                 <Send size={15} aria-hidden="true" />
                 Start a conversation
               </a>
@@ -504,6 +507,9 @@ export default function Home() {
               <article
                 className={group.tone}
                 key={group.name}
+                // These chips pick their own pitch and pulse, and the card's mute
+                // switch confirms itself, so the page-wide listener stands down.
+                data-tap-feedback={isLanguages ? "self" : undefined}
                 onFocus={isLanguages ? revealFocusedChip : undefined}
                 onPointerDown={isLanguages ? pressLanguageChip : undefined}
                 onPointerUp={isLanguages ? releaseLanguageChip : undefined}
@@ -725,14 +731,14 @@ export default function Home() {
               <h3>Bring a real system problem. I'll bring a clear engineering mindset.</h3>
             </div>
 
-            <a className="hire ripple" href={`mailto:${profile.email}?subject=Portfolio%20enquiry`} onPointerDown={() => haptic("tap")}>
+            <a className="hire ripple" href={`mailto:${profile.email}?subject=Portfolio%20enquiry`}>
               <Mail size={16} aria-hidden="true" />
               Start via email
               <ArrowUpRight size={15} aria-hidden="true" />
             </a>
 
             <div className="contact-cards" data-stagger>
-              <a href={`mailto:${profile.email}`} onPointerDown={() => haptic("tap")}>
+              <a href={`mailto:${profile.email}`}>
                 <Mail size={17} aria-hidden="true" />
                 <span>
                   <small>EMAIL</small>
@@ -740,7 +746,7 @@ export default function Home() {
                 </span>
                 <ArrowUpRight size={15} aria-hidden="true" />
               </a>
-              <a href={profile.linkedin} target="_blank" rel="noreferrer" onPointerDown={() => haptic("tap")}>
+              <a href={profile.linkedin} target="_blank" rel="noreferrer">
                 <Linkedin size={17} aria-hidden="true" />
                 <span>
                   <small>LINKEDIN</small>
@@ -751,13 +757,13 @@ export default function Home() {
             </div>
 
             <div className="social" data-stagger>
-              <a href={profile.github} target="_blank" rel="noreferrer" onPointerDown={() => haptic("tap")}>
+              <a href={profile.github} target="_blank" rel="noreferrer">
                 <Github size={18} aria-hidden="true" />
                 <b>GitHub</b>
                 <small>{profile.githubHandle}</small>
                 <ArrowUpRight size={15} aria-hidden="true" />
               </a>
-              <a href={profile.linkedin} target="_blank" rel="noreferrer" onPointerDown={() => haptic("tap")}>
+              <a href={profile.linkedin} target="_blank" rel="noreferrer">
                 <Linkedin size={18} aria-hidden="true" />
                 <b>LinkedIn</b>
                 <small>{profile.linkedinHandle}</small>
@@ -820,7 +826,6 @@ export default function Home() {
           className="to-top"
           href="#home"
           aria-label="Back to top"
-          onPointerDown={() => haptic("tap")}
         >
           <ArrowDown size={18} aria-hidden="true" />
         </a>

@@ -129,7 +129,6 @@ export default function SkillGraph() {
                       data-selected={selected === node.id}
                       data-connected={connectedToSelection}
                       aria-pressed={selected === node.id}
-                      onPointerDown={() => haptic("tap")}
                       onMouseEnter={() => setFocusId(node.id)}
                       onMouseLeave={() => setFocusId(null)}
                       onFocus={() => setFocusId(node.id)}

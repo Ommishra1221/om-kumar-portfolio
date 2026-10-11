@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef } from "react";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { endpoints } from "@/data/portfolio";
 import type { Endpoint } from "@/data/portfolio";
-import { haptic } from "@/lib/haptics";
 import "./ApiNav.css";
 
 type Props = {
@@ -114,10 +113,7 @@ export function MobileNav({ menuOpen, onMenuOpen, onMenuClose, activeId }: Props
         ref={triggerRef}
         type="button"
         className="head-icon hit menu-trigger"
-        onClick={() => {
-          haptic("tap");
-          onMenuOpen();
-        }}
+        onClick={onMenuOpen}
         aria-label="Open navigation"
         aria-expanded={menuOpen}
         aria-controls="endpoint-menu"
@@ -152,10 +148,7 @@ export function MobileNav({ menuOpen, onMenuOpen, onMenuClose, activeId }: Props
             <li key={endpoint.id}>
               <a
                 href={`#${endpoint.id}`}
-                onClick={() => {
-                  haptic("tap");
-                  close();
-                }}
+                onClick={close}
                 aria-current={activeId === endpoint.id ? "true" : undefined}
               >
                 <Method method={endpoint.method} />

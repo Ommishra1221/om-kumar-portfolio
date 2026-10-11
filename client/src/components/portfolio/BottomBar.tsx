@@ -1,6 +1,5 @@
 import { Box, Download, Github, Layers3, Send } from "lucide-react";
 import { quickActions, profile } from "@/data/portfolio";
-import { haptic } from "@/lib/haptics";
 import "./BottomBar.css";
 
 const icons = {
@@ -34,7 +33,6 @@ export default function BottomBar({ activeId }: { activeId: string }) {
             {...(download ? { download: "" } : {})}
             aria-label={download ? `${action.label} — download PDF` : action.label}
             aria-current={active ? "true" : undefined}
-            onPointerDown={() => haptic("tap")}
           >
             <Icon size={18} aria-hidden="true" />
             <small>{action.label}</small>

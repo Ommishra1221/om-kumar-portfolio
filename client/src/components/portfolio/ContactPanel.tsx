@@ -157,7 +157,7 @@ export default function ContactPanel() {
       ))}
 
       <div className="form-actions">
-        <button type="submit" className="ripple" disabled={status === "sending"} onPointerDown={() => haptic("tap")}>
+        <button type="submit" className="ripple" disabled={status === "sending"}>
           {status === "sending" ? (
             "Sending…"
           ) : (

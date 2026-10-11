@@ -70,13 +70,13 @@ export default function ProjectCard({ project, index }: { project: Project; inde
             </div>
 
             <div className="project-links">
-              <a href={project.repo} target="_blank" rel="noreferrer" onPointerDown={() => haptic("tap")}>
+              <a href={project.repo} target="_blank" rel="noreferrer">
                 <Github size={15} aria-hidden="true" />
                 View repository
                 <ArrowUpRight size={15} aria-hidden="true" />
               </a>
               {project.live && (
-                <a className="live-link" href={project.live} target="_blank" rel="noreferrer" onPointerDown={() => haptic("tap")}>
+                <a className="live-link" href={project.live} target="_blank" rel="noreferrer">
                   <ExternalLink size={14} aria-hidden="true" />
                   Live demo
                 </a>
